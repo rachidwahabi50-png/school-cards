@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>مولد QR للتلاميذ</title>
+
+<style>
+body{
+    margin:0;
+    background:#f1f5f9;
+    font-family:Arial,sans-serif;
+    text-align:center;
+    padding:30px 15px;
+}
+
+.box{
+    max-width:400px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 5px 25px #0002;
+}
+
+input{
+    width:90%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:18px;
+    text-align:center;
+    margin:10px 0;
+}
+
+button{
+    width:95%;
+    padding:14px;
+    border:0;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+#qr{
+    margin:25px auto;
+}
+
+a{
+    display:block;
+    margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>مولد QR للتلميذ</h2>
+
+<p>دخل رقم التلميذ</p>
+
+<input
+    id="studentId"
+    type="text"
+    placeholder="مثال: 001"
+>
+
+<button onclick="generateQR()">
+    إنشاء QR
+</button>
+
+<div id="qr"></div>
+
+</div>
+
+<script>
+
+function generateQR(){
+
+    const id =
+        document.getElementById("studentId").value.trim();
+
+    if(!id){
+        alert("دخل رقم التلميذ");
+        return;
+    }
+
+    const url =
+        "https://rachidwahabi50-png.github.io/school-cards/?id="
+        + encodeURIComponent(id);
+
+    const qrUrl =
+        "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
+        + encodeURIComponent(url);
+
+    document.getElementById("qr").innerHTML = `
+        <img
+            src="${qrUrl}"
+            width="300"
+            height="300"
+            alt="QR Code"
+        >
+
+        <p>
+            <b>الرابط:</b><br>
+            ${url}
+        </p>
+
+        <a
+            href="${qrUrl}"
+            target="_blank"
+        >
+            فتح QR
+        </a>
+    `;
+}
+
+</script>
+
+</body>
+</html>
