@@ -1,14 +1,10 @@
 [
   {
-  "id": "001",
-  "nom": "العلوي",
-  "prenom": "محمد",
-  "classe": "3A",
-  "photo": "https://i.pravatar.cc/300?img=12"
-}
-    
-    
-
+    "id": "001",
+    "nom": "العلوي",
+    "prenom": "محمد",
+    "classe": "3A",
+    "photo": "https://i.pravatar.cc/300?img=12"
   },
   {
     "id": "002",
