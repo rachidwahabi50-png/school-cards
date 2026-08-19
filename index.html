@@ -3,19 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>بطاقة التلميذ</title>
 
 <style>
+
+*{
+    box-sizing:border-box;
+}
+
 body{
     margin:0;
     background:#f1f5f9;
     font-family:Arial,sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 .card{
     width:90%;
     max-width:400px;
-    margin:50px auto;
     background:white;
     padding:25px;
     border-radius:20px;
@@ -31,19 +40,26 @@ body{
 }
 
 .photo{
-    width:110px;
-    height:110px;
+    width:120px;
+    height:120px;
     border-radius:50%;
     background:#e2e8f0;
     margin:0 auto 20px;
+    overflow:hidden;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:45px;
+}
+
+.photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
 }
 
 h1{
-    margin:10px 0;
+    margin:10px 0 20px;
+    font-size:25px;
 }
 
 .info{
@@ -51,12 +67,30 @@ h1{
     background:#f8fafc;
     padding:15px;
     border-radius:12px;
-    line-height:2;
+    line-height:2.2;
+}
+
+.info div{
+    border-bottom:1px solid #e2e8f0;
+}
+
+.info div:last-child{
+    border-bottom:none;
 }
 
 .label{
     font-weight:bold;
 }
+
+.loading{
+    color:#64748b;
+}
+
+.error{
+    color:#dc2626;
+    font-weight:bold;
+}
+
 </style>
 </head>
 
@@ -64,64 +98,115 @@ h1{
 
 <div class="card">
 
-<div class="logo">ÉCOLE ABC</div>
+    <div class="logo">
+        ÉCOLE ABC
+    </div>
 
-<div class="photo">
-<img id="photo" src="" alt="Photo de l'élève">
-</div>
+    <div class="photo">
+        <img id="photo" src="" alt="Photo de l'élève">
+    </div>
 
-<h1 id="name">Chargement...</h1>
+    <h1 id="name" class="loading">
+        Chargement...
+    </h1>
 
-<div class="info">
-<div>
-<span class="label">رقم التسجيل:</span>
-<span id="id"></span>
-</div>
+    <div class="info">
 
-<div>
-<span class="label">القسم:</span>
-<span id="class"></span>
-</div>
-</div>
+        <div>
+            <span class="label">رقم التسجيل:</span>
+            <span id="id"></span>
+        </div>
+
+        <div>
+            <span class="label">القسم:</span>
+            <span id="class"></span>
+        </div>
+
+    </div>
 
 </div>
 
 <script>
 
 const params = new URLSearchParams(window.location.search);
+
 const id = params.get("id");
 
-fetch("students.json")
-.then(response => response.json())
-.then(students => {
-
-    const student = students.find(s => s.id === id);
-
-    if(student){
-
-        document.getElementById("name").textContent =
-        student.prenom + " " + student.nom;
-
-        document.getElementById("id").textContent =
-        student.id;
-
-        document.getElementById("class").textContent =
-        student.classe;
-
-    }else{
-
-        document.getElementById("name").textContent =
-        "التلميذ غير موجود";
-
-    }
-
-})
-.catch(error => {
+if(!id){
 
     document.getElementById("name").textContent =
-    "وقع خطأ في تحميل المعلومات";
+        "رقم التلميذ غير موجود";
 
-});
+    document.getElementById("name").className =
+        "error";
+
+}else{
+
+    fetch("students.json")
+
+    .then(response => {
+
+        if(!response.ok){
+            throw new Error("students.json not found");
+        }
+
+        return response.json();
+
+    })
+
+    .then(students => {
+
+        const student = students.find(
+            s => String(s.id) === String(id)
+        );
+
+        if(!student){
+
+            document.getElementById("name").textContent =
+                "التلميذ غير موجود";
+
+            document.getElementById("name").className =
+                "error";
+
+            return;
+        }
+
+        document.getElementById("name").textContent =
+            student.prenom + " " + student.nom;
+
+        document.getElementById("id").textContent =
+            student.id;
+
+        document.getElementById("class").textContent =
+            student.classe;
+
+        if(student.photo){
+
+            document.getElementById("photo").src =
+                student.photo;
+
+        }else{
+
+            document.getElementById("photo").style.display =
+                "none";
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        document.getElementById("name").textContent =
+            "وقع خطأ في تحميل المعلومات";
+
+        document.getElementById("name").className =
+            "error";
+
+    });
+
+}
 
 </script>
 
