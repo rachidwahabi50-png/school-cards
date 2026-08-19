@@ -7,16 +7,15 @@
 <title>بطاقة التلميذ</title>
 
 <style>
-
 *{
     box-sizing:border-box;
 }
 
 body{
     margin:0;
+    min-height:100vh;
     background:#f1f5f9;
     font-family:Arial,sans-serif;
-    min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -43,12 +42,9 @@ body{
     width:120px;
     height:120px;
     border-radius:50%;
-    background:#e2e8f0;
-    margin:0 auto 20px;
     overflow:hidden;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    margin:0 auto 20px;
+    background:#e2e8f0;
 }
 
 .photo img{
@@ -70,27 +66,13 @@ h1{
     line-height:2.2;
 }
 
-.info div{
-    border-bottom:1px solid #e2e8f0;
-}
-
-.info div:last-child{
-    border-bottom:none;
-}
-
 .label{
     font-weight:bold;
 }
 
-.loading{
-    color:#64748b;
-}
-
 .error{
-    color:#dc2626;
-    font-weight:bold;
+    color:red;
 }
-
 </style>
 </head>
 
@@ -98,17 +80,13 @@ h1{
 
 <div class="card">
 
-    <div class="logo">
-        ÉCOLE ABC
-    </div>
+    <div class="logo">ÉCOLE ABC</div>
 
     <div class="photo">
-        <img id="photo" src="" alt="Photo de l'élève">
+        <img id="photo" src="" alt="Photo">
     </div>
 
-    <h1 id="name" class="loading">
-        Chargement...
-    </h1>
+    <h1 id="name">Chargement...</h1>
 
     <div class="info">
 
@@ -128,83 +106,58 @@ h1{
 
 <script>
 
+const students = {
+
+    "001": {
+        nom: "العلوي",
+        prenom: "محمد",
+        classe: "3A",
+        photo: "https://i.pravatar.cc/300?img=12"
+    },
+
+    "002": {
+        nom: "البناني",
+        prenom: "ياسين",
+        classe: "3B",
+        photo: "https://i.pravatar.cc/300?img=13"
+    },
+
+    "003": {
+        nom: "أمثال",
+        prenom: "أحمد",
+        classe: "4A",
+        photo: "https://i.pravatar.cc/300?img=14"
+    }
+
+};
+
 const params = new URLSearchParams(window.location.search);
 
 const id = params.get("id");
 
-if(!id){
+const student = students[id];
+
+if(student){
 
     document.getElementById("name").textContent =
-        "رقم التلميذ غير موجود";
+        student.prenom + " " + student.nom;
 
-    document.getElementById("name").className =
-        "error";
+    document.getElementById("id").textContent =
+        id;
+
+    document.getElementById("class").textContent =
+        student.classe;
+
+    document.getElementById("photo").src =
+        student.photo;
 
 }else{
 
-    fetch("students.json")
+    document.getElementById("name").textContent =
+        "التلميذ غير موجود";
 
-    .then(response => {
-
-        if(!response.ok){
-            throw new Error("students.json not found");
-        }
-
-        return response.json();
-
-    })
-
-    .then(students => {
-
-        const student = students.find(
-            s => String(s.id) === String(id)
-        );
-
-        if(!student){
-
-            document.getElementById("name").textContent =
-                "التلميذ غير موجود";
-
-            document.getElementById("name").className =
-                "error";
-
-            return;
-        }
-
-        document.getElementById("name").textContent =
-            student.prenom + " " + student.nom;
-
-        document.getElementById("id").textContent =
-            student.id;
-
-        document.getElementById("class").textContent =
-            student.classe;
-
-        if(student.photo){
-
-            document.getElementById("photo").src =
-                student.photo;
-
-        }else{
-
-            document.getElementById("photo").style.display =
-                "none";
-
-        }
-
-    })
-
-    .catch(error => {
-
-        console.error(error);
-
-        document.getElementById("name").textContent =
-            "وقع خطأ في تحميل المعلومات";
-
-        document.getElementById("name").className =
-            "error";
-
-    });
+    document.getElementById("name").className =
+        "error";
 
 }
 
