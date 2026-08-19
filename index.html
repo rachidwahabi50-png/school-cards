@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>بطاقة التلميذ</title>
 
 <style>
@@ -65,18 +64,13 @@ h1{
 
 <div class="card">
 
-<div class="logo">
-ÉCOLE ABC
-</div>
+<div class="logo">ÉCOLE ABC</div>
 
-<div class="photo">
-👤
-</div>
+<div class="photo">👤</div>
 
 <h1 id="name">Chargement...</h1>
 
 <div class="info">
-
 <div>
 <span class="label">رقم التسجيل:</span>
 <span id="id"></span>
@@ -86,47 +80,46 @@ h1{
 <span class="label">القسم:</span>
 <span id="class"></span>
 </div>
-
 </div>
 
 </div>
 
 <script>
 
-const students = {
-
-"001":{
-name:"محمد العلوي",
-class:"3A"
-},
-
-"002":{
-name:"ياسين البناني",
-class:"3B"
-}
-
-};
-
 const params = new URLSearchParams(window.location.search);
-
 const id = params.get("id");
 
-const student = students[id];
+fetch("students.json")
+.then(response => response.json())
+.then(students => {
 
-if(student){
+    const student = students.find(s => s.id === id);
 
-document.getElementById("name").textContent = student.name;
+    if(student){
 
-document.getElementById("id").textContent = id;
+        document.getElementById("name").textContent =
+        student.prenom + " " + student.nom;
 
-document.getElementById("class").textContent = student.class;
+        document.getElementById("id").textContent =
+        student.id;
 
-}else{
+        document.getElementById("class").textContent =
+        student.classe;
 
-document.getElementById("name").textContent =
-"التلميذ غير موجود";
+    }else{
 
-}
+        document.getElementById("name").textContent =
+        "التلميذ غير موجود";
+
+    }
+
+})
+.catch(error => {
+
+    document.getElementById("name").textContent =
+    "وقع خطأ في تحميل المعلومات";
+
+});
 
 </script>
 
