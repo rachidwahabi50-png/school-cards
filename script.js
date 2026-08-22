@@ -62,11 +62,15 @@ function cardHTML(config, student) {
           <div class="name-block">
             <div class="prenom">${student.prenom}</div>
             <div class="nom">${student.nom}</div>
+            ${(student.prenomAr || student.nomAr)
+              ? `<div class="name-ar">${student.prenomAr ?? ""} ${student.nomAr ?? ""}</div>`
+              : ""}
           </div>
           <div class="meta-grid">
             <div class="meta-item">
               <div class="label">Classe</div>
               <div class="value">${student.classe}</div>
+              ${student.classeAr ? `<div class="value-ar">${student.classeAr}</div>` : ""}
             </div>
             <div class="meta-item">
               <div class="label">Année scolaire</div>
