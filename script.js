@@ -32,7 +32,7 @@ function cardHTML(config, student) {
   return `
     <div class="card" data-id="${student.id}">
       <div class="card-band">
-        <img class="school-logo" src="${config.logo}" alt="">
+        <img class="school-logo" src="${config.logo}" alt="" onerror="this.style.visibility='hidden'">
         <div class="school-names">
           <div class="school-fr">${config.nomEcole}</div>
           <div class="school-ar">${config.nomEcoleAr}</div>
@@ -44,7 +44,7 @@ function cardHTML(config, student) {
       </div>
       <div class="card-body">
         <div class="photo-wrap">
-          <img class="photo" src="${student.photo}" alt="">
+          <img class="photo" src="${student.photo}" alt="" onerror="this.style.background='#eee'">
           <img class="qr" src="${qrUrlFor(student.id)}" alt="QR code">
           <div class="scan-label">Scan</div>
         </div>
@@ -75,6 +75,70 @@ function cardHTML(config, student) {
       </div>
     </div>
   `;
+}
+
+// The extra fields (date de naissance, téléphone parent, adresse) never
+// appear on the card itself — neither printed nor on first scan. They only
+// show up after someone enters the PIN code from config.json ("codeAcces").
+// NOTE: this is a simple deterrent, not real security — anyone who can read
+// the site's source or fetch students.json directly can still see the data.
+// A real access-control system would need a backend + login, which a free
+// static GitHub Pages site cannot provide.
+function adminPanelHTML() {
+  return `
+    <div class="admin-panel">
+      <button type="button" class="admin-toggle">🔒 Informations complètes (Administration)</button>
+      <div class="admin-body" hidden>
+        <div class="pin-row">
+          <input type="password" inputmode="numeric" class="pin-input" placeholder="Code PIN" maxlength="12">
+          <button type="button" class="pin-submit">Valider</button>
+        </div>
+        <div class="pin-error" hidden>Code incorrect.</div>
+        <div class="admin-details" hidden></div>
+      </div>
+    </div>
+  `;
+}
+
+function adminDetailsHTML(student) {
+  return `
+    <div class="meta-item"><div class="label">Date de naissance</div><div class="value">${student.dateNaissance || "—"}</div></div>
+    <div class="meta-item"><div class="label">Téléphone parent</div><div class="value">${student.telephoneParent || "—"}</div></div>
+    <div class="meta-item"><div class="label">Adresse</div><div class="value">${student.adresse || "—"}</div></div>
+  `;
+}
+
+function wireAdminPanel(root, student, config) {
+  const panel = root.querySelector(".admin-panel");
+  if (!panel) return;
+  const toggle = panel.querySelector(".admin-toggle");
+  const body = panel.querySelector(".admin-body");
+  const pinInput = panel.querySelector(".pin-input");
+  const pinRow = panel.querySelector(".pin-row");
+  const pinSubmit = panel.querySelector(".pin-submit");
+  const pinError = panel.querySelector(".pin-error");
+  const details = panel.querySelector(".admin-details");
+
+  toggle.addEventListener("click", () => {
+    body.hidden = !body.hidden;
+    if (!body.hidden) pinInput.focus();
+  });
+
+  const tryUnlock = () => {
+    if (pinInput.value === String(config.codeAcces ?? "")) {
+      details.innerHTML = adminDetailsHTML(student);
+      details.hidden = false;
+      pinError.hidden = true;
+      pinRow.hidden = true;
+    } else {
+      pinError.hidden = false;
+    }
+  };
+
+  pinSubmit.addEventListener("click", tryUnlock);
+  pinInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") tryUnlock();
+  });
 }
 
 function notFoundHTML(id) {
@@ -110,11 +174,12 @@ async function renderSingleCard() {
     root.innerHTML = `
       <div class="stage-header">${config.nomEcole} · ${config.nomEcoleAr}</div>
       ${cardHTML(config, student)}
+      ${adminPanelHTML()}
       <div class="stage-footer">
-        Cette carte est générée automatiquement à partir de students.json.<br>
-        ${config.adresse ? config.adresse + " · " : ""}${config.telephone ?? ""}
+        Cette carte est générée automatiquement à partir de students.json.
       </div>
     `;
+    wireAdminPanel(root, student, config);
   } catch (e) {
     root.innerHTML = notFoundHTML(id);
     console.error(e);
