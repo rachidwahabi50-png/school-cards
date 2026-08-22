@@ -177,6 +177,73 @@ body.mode-print{ background:#fff; }
   background:var(--navy); padding:2px 8px; border-radius:5px;
 }
 
+.admin-panel{
+  width: min(420px, 92vw);
+  margin-top: 16px;
+}
+.admin-toggle{
+  width:100%;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.25);
+  color:#fff;
+  font-family:'Cairo', sans-serif;
+  font-size:.8rem;
+  font-weight:700;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.admin-toggle:hover{ background: rgba(255,255,255,.16); }
+.admin-body{
+  margin-top:10px;
+  background:#fff;
+  border-radius:12px;
+  padding:14px;
+  box-shadow: 0 20px 40px -18px rgba(0,0,0,.5);
+}
+.pin-row{ display:flex; gap:8px; }
+.pin-input{
+  flex:1;
+  font-family:'JetBrains Mono', monospace;
+  font-size:.9rem;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  letter-spacing:.15em;
+}
+.pin-submit{
+  background: var(--navy);
+  color:#fff;
+  border:none;
+  font-weight:700;
+  font-family:'Cairo', sans-serif;
+  padding:8px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:.82rem;
+}
+.pin-error{
+  color:#b3261e;
+  font-size:.75rem;
+  margin-top:8px;
+  font-weight:700;
+}
+.admin-details{
+  margin-top:12px;
+  display:grid;
+  gap:8px;
+  border-top:1px dashed var(--line);
+  padding-top:10px;
+}
+.admin-details .label{
+  font-size:.55rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); font-weight:700;
+}
+.admin-details .value{
+  font-family:'JetBrains Mono', monospace;
+  font-size:.82rem; font-weight:700; color:var(--ink);
+}
+
 .stage-footer{
   margin-top:22px;
   color: rgba(255,255,255,.55);
