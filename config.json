@@ -1,9 +1,10 @@
 {
-  "nomEcole": "École ABC",
-  "nomEcoleAr": "مدرسة ABC",
+  "nomEcole": "École Alhanae",
+  "nomEcoleAr": "مدرسة الهناء ",
   "logo": "https://via.placeholder.com/150x150.png?text=LOGO",
   "adresse": "Avenue Hassan II, Tanger",
   "telephone": "0600-000000",
   "anneeScolaire": "2026-2027",
-  "dateExpiration": "Juin 2027"
+  "dateExpiration": "Juin 2027",
+  "codeAcces": "1234"
 }
