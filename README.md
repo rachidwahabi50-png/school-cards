@@ -1,49 +1,310 @@
-# school-cards
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
-Système de cartes d'élèves — Excel + GitHub Pages + QR Code.
-Site : https://rachidwahabi50-png.github.io/school-cards/
+:root{
+  --navy: #14213d;
+  --navy-2: #1f3864;
+  --gold: #c9a227;
+  --gold-soft: #e7cf7a;
+  --paper: #faf8f3;
+  --ink: #1b1b1b;
+  --muted: #6b6f76;
+  --line: #e3ddcd;
+  --card-w: 9.8cm;
+  --card-h: 6.9cm;
+  --zellige: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M13 0 L26 13 L13 26 L0 13 Z' fill='none' stroke='%23e7cf7a' stroke-width='1'/%3E%3C/svg%3E");
+}
 
-## Fichiers du dépôt
+*{ box-sizing:border-box; }
 
-| Fichier | Rôle |
-|---|---|
-| `index.html` | Affiche la carte d'un élève (`?id=001`) |
-| `print.html` | Grille d'impression, 8 cartes par page A4 (`?print=001,002,003` ou `?print=all`) |
-| `style.css` | Mise en page et style de la carte |
-| `script.js` | Lit `config.json` et `students.json` et construit la carte |
-| `config.json` | Informations de l'école (nom, logo, année scolaire...) |
-| `students.json` | Liste des élèves — **c'est le seul fichier à mettre à jour régulièrement** |
-| `ELEVES_CARTES.xlsx` | Fichier Excel maître : vous le remplissez, il génère `students.json` |
+html,body{
+  margin:0;
+  min-height:100%;
+  background: linear-gradient(180deg, #0f1b30 0%, #14213d 45%, #1a2b4d 100%);
+  font-family:'Cairo', sans-serif;
+  color: var(--ink);
+}
 
-## Mise à jour après modification dans Excel
+body.mode-print{ background:#fff; }
 
-1. Dans Excel, onglet **CONFIG** : informations de l'école. Onglet **ELEVES** : une ligne par élève.
-2. Onglet **JSON_EXPORT**, cellule A8 : copiez tout le contenu.
-3. Sur github.com, ouvrez ce dépôt → cliquez sur `students.json` → icône crayon (Edit) →
-   sélectionnez tout, collez le nouveau contenu → **Commit changes**.
-4. Si le nom de l'école, le logo, l'année scolaire ou la date d'expiration ont changé,
-   faites la même chose avec `config.json` (les valeurs viennent de l'onglet CONFIG).
-5. Le site se met à jour automatiquement en 1 à 2 minutes.
+/* ---------- single card page ---------- */
 
-Aucune autre modification n'est nécessaire : les liens (`?id=001`) et les QR codes
-restent valables tant que l'ID de l'élève ne change pas.
+.stage{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding: 32px 16px 48px;
+}
 
-## Pourquoi le QR reste toujours valable
+.stage-header{
+  text-align:center;
+  color: var(--gold-soft);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-size:.72rem;
+  font-weight:700;
+  margin-bottom:22px;
+  opacity:.85;
+}
 
-Le QR code n'encode que l'adresse de la page, par exemple :
+.card{
+  position:relative;
+  width: min(420px, 92vw);
+  aspect-ratio: 9.8 / 6.9;
+  background: #fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06);
+  display:flex;
+  flex-direction:column;
+}
 
-```
-https://rachidwahabi50-png.github.io/school-cards/?id=001
-```
+.card-band{
+  position:relative;
+  height:30%;
+  background: linear-gradient(120deg, var(--navy) 0%, var(--navy-2) 100%);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 0 14px;
+  overflow:hidden;
+}
 
-Il ne contient jamais le nom, la classe ou la photo directement. Ces informations sont
-lues en direct dans `students.json` à chaque scan — donc si vous changez le nom ou la
-classe d'un élève dans `students.json`, sa carte se met à jour sans avoir à réimprimer
-son QR code.
+.card-band::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image: var(--zellige);
+  background-size: 26px 26px;
+  opacity:.16;
+  mix-blend-mode: screen;
+}
 
-## Automatisation future (optionnel)
+.school-logo{
+  width:34px; height:34px;
+  border-radius:8px;
+  background:#fff;
+  object-fit:cover;
+  flex:none;
+  box-shadow:0 2px 6px rgba(0,0,0,.35);
+  position:relative; z-index:1;
+}
 
-Pour l'instant la mise à jour se fait manuellement (copier-coller sur GitHub), ce qui
-reste simple et gratuit. Si vous voulez plus tard un bouton "publier" direct depuis
-Excel, cela demande une petite GitHub Action + un jeton d'accès personnel — dites-le
-et on pourra l'ajouter, mais ce n'est pas nécessaire pour que le système fonctionne.
+.school-names{ position:relative; z-index:1; min-width:0; }
+.school-fr{
+  color:#fff; font-weight:800; font-size:.86rem; line-height:1.15;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.school-ar{
+  color: var(--gold-soft); font-weight:700; font-size:.78rem; line-height:1.3;
+  direction:rtl;
+}
+.card-title{
+  margin-inline-start:auto; position:relative; z-index:1; text-align:end;
+  color:#fff; opacity:.9;
+}
+.card-title .fr{ font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700;}
+.card-title .ar{ font-size:.68rem; font-weight:700; direction:rtl; color:var(--gold-soft);}
+
+.card-body{
+  flex:1;
+  display:flex;
+  gap:12px;
+  padding: 10px 14px 12px;
+}
+
+.photo-wrap{
+  flex:none;
+  width:30%;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+}
+.photo{
+  width:100%; aspect-ratio: 3/3.6;
+  object-fit:cover;
+  border-radius:8px;
+  border:2px solid var(--gold);
+  background:#eee;
+}
+.qr{
+  width: 74%;
+  aspect-ratio:1/1;
+  object-fit:contain;
+  border:1px solid var(--line);
+  border-radius:4px;
+  background:#fff;
+}
+.scan-label{
+  font-size:.5rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); font-weight:700;
+}
+
+.info{ flex:1; min-width:0; display:flex; flex-direction:column; justify-content:space-between; }
+
+.name-block .prenom{
+  font-size:1.05rem; font-weight:800; color:var(--navy); line-height:1.12;
+}
+.name-block .nom{
+  font-size:1.05rem; font-weight:700; color:var(--navy); line-height:1.15;
+  text-transform:uppercase;
+}
+
+.meta-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:6px 10px;
+  margin-top:8px;
+}
+.meta-item .label{
+  font-size:.52rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); font-weight:700;
+}
+.meta-item .value{
+  font-family:'JetBrains Mono', monospace;
+  font-size:.78rem; font-weight:700; color:var(--ink);
+}
+
+.id-row{
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px dashed var(--line);
+  display:flex; align-items:baseline; justify-content:space-between;
+}
+.id-row .label{ font-size:.52rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.id-row .value{
+  font-family:'JetBrains Mono', monospace;
+  font-weight:700; font-size:.92rem; color:var(--gold-soft);
+  background:var(--navy); padding:2px 8px; border-radius:5px;
+}
+
+.admin-panel{
+  width: min(420px, 92vw);
+  margin-top: 16px;
+}
+.admin-toggle{
+  width:100%;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.25);
+  color:#fff;
+  font-family:'Cairo', sans-serif;
+  font-size:.8rem;
+  font-weight:700;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.admin-toggle:hover{ background: rgba(255,255,255,.16); }
+.admin-body{
+  margin-top:10px;
+  background:#fff;
+  border-radius:12px;
+  padding:14px;
+  box-shadow: 0 20px 40px -18px rgba(0,0,0,.5);
+}
+.pin-row{ display:flex; gap:8px; }
+.pin-input{
+  flex:1;
+  font-family:'JetBrains Mono', monospace;
+  font-size:.9rem;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  letter-spacing:.15em;
+}
+.pin-submit{
+  background: var(--navy);
+  color:#fff;
+  border:none;
+  font-weight:700;
+  font-family:'Cairo', sans-serif;
+  padding:8px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:.82rem;
+}
+.pin-error{
+  color:#b3261e;
+  font-size:.75rem;
+  margin-top:8px;
+  font-weight:700;
+}
+.admin-details{
+  margin-top:12px;
+  display:grid;
+  gap:8px;
+  border-top:1px dashed var(--line);
+  padding-top:10px;
+}
+.admin-details .label{
+  font-size:.55rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); font-weight:700;
+}
+.admin-details .value{
+  font-family:'JetBrains Mono', monospace;
+  font-size:.82rem; font-weight:700; color:var(--ink);
+}
+
+.stage-footer{
+  margin-top:22px;
+  color: rgba(255,255,255,.55);
+  font-size:.7rem;
+  text-align:center;
+  max-width:420px;
+}
+.stage-footer a{ color: var(--gold-soft); }
+
+.print-link{
+  margin-top:14px;
+  font-size:.72rem;
+}
+.print-link a{
+  color:#fff; background:rgba(255,255,255,.12); padding:8px 14px; border-radius:999px;
+  text-decoration:none; border:1px solid rgba(255,255,255,.25);
+}
+
+/* ---------- not found state ---------- */
+.not-found{
+  width:min(420px,92vw);
+  background:#fff; border-radius:16px; padding:34px 24px;
+  text-align:center; box-shadow: 0 30px 60px -20px rgba(0,0,0,.55);
+}
+.not-found .icon{ font-size:2.2rem; margin-bottom:10px; }
+.not-found h1{ font-size:1.05rem; color:var(--navy); margin:0 0 6px; }
+.not-found p{ color:var(--muted); font-size:.85rem; margin:0; direction:rtl; }
+.not-found .sub{ margin-top:4px; direction:ltr; font-size:.78rem; }
+
+/* ---------- print grid page ---------- */
+.print-toolbar{
+  position:sticky; top:0; z-index:5;
+  background:var(--navy); color:#fff;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 18px; font-size:.82rem;
+}
+.print-toolbar button{
+  background:var(--gold); color:var(--navy); border:none; font-weight:700;
+  padding:8px 16px; border-radius:8px; cursor:pointer; font-family:inherit;
+}
+
+.sheet{
+  width:21cm;
+  margin: 18px auto 60px;
+  background:#fff;
+  display:grid;
+  grid-template-columns: repeat(2, var(--card-w));
+  grid-auto-rows: var(--card-h);
+  gap: 0.3cm;
+  justify-content:center;
+  padding: 0.4cm;
+}
+
+.sheet .card{
+  width:var(--card-w); height:var(--card-h); aspect-ratio:auto;
+  box-shadow:none; border:1px solid #ccc;
+}
+
+@media print{
+  .print-toolbar{ display:none; }
+  body{ background:#fff; }
+  .sheet{ margin:0; page-break-after: always; }
+  .card{ box-shadow:none; }
+}
