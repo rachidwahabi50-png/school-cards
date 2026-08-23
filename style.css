@@ -50,11 +50,12 @@ body.mode-print{ background:#fff; }
 
 .card{
   position:relative;
-  width: min(420px, 92vw);
+  width: min(460px, 92vw);
   aspect-ratio: 9.8 / 6.9;
   background: #fff;
   border-radius:16px;
   overflow:hidden;
+  border: 1px solid rgba(0,0,0,.06);
   box-shadow: 0 36px 70px -22px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08);
   display:flex;
   flex-direction:column;
@@ -149,26 +150,25 @@ body.mode-print{ background:#fff; }
   color:var(--muted); font-weight:700;
 }
 
-.info{ flex:1; min-width:0; display:flex; flex-direction:column; justify-content:space-between; }
+.info{ flex:1; min-width:0; display:flex; flex-direction:column; justify-content:flex-start; gap:10px; }
 
 .name-block .prenom{
-  font-size:1.05rem; font-weight:800; color:var(--navy); line-height:1.12;
+  font-size:1.05rem; font-weight:800; color:var(--navy); line-height:1.2;
 }
 .name-block .nom{
-  font-size:1.05rem; font-weight:700; color:var(--navy); line-height:1.15;
+  font-size:1.05rem; font-weight:700; color:var(--navy); line-height:1.2;
   text-transform:uppercase;
 }
 .name-block .name-ar{
   direction:rtl;
-  font-size:.82rem; font-weight:700; color:var(--muted);
-  margin-top:3px; line-height:1.3;
+  font-size:.86rem; font-weight:700; color:var(--muted);
+  margin-top:5px; line-height:1.3;
 }
 
 .meta-grid{
   display:grid;
   grid-template-columns: 1fr 1fr;
-  gap:6px 10px;
-  margin-top:8px;
+  gap:8px 10px;
 }
 .meta-item .label{
   font-size:.52rem; letter-spacing:.08em; text-transform:uppercase;
@@ -177,16 +177,16 @@ body.mode-print{ background:#fff; }
 .meta-item .value{
   font-family:'JetBrains Mono', monospace;
   font-size:.78rem; font-weight:700; color:var(--ink);
+  display:flex; align-items:baseline; gap:6px; flex-wrap:wrap;
 }
-.meta-item .value-ar{
+.meta-item .value .value-ar{
   direction:rtl;
   font-family:'Cairo', sans-serif;
   font-size:.72rem; font-weight:700; color:var(--muted);
-  margin-top:1px;
 }
 
 .id-row{
-  margin-top:8px;
+  margin-top:auto;
   padding-top:8px;
   border-top:1px dashed var(--line);
   display:flex; align-items:baseline; justify-content:space-between;
@@ -320,7 +320,7 @@ body.mode-print{ background:#fff; }
 
 .sheet .card{
   width:var(--card-w); height:var(--card-h); aspect-ratio:auto;
-  box-shadow:none; border:1px solid #ccc;
+  box-shadow:none; border:1.5px dashed var(--navy);
 }
 
 @media print{
