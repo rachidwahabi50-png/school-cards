@@ -3,6 +3,7 @@
 :root{
   --navy: #14213d;
   --navy-2: #1f3864;
+  --navy-deep: #0f1b30;
   --gold: #c9a227;
   --gold-soft: #e7cf7a;
   --paper: #faf8f3;
@@ -14,12 +15,49 @@
   --zellige: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M13 0 L26 13 L13 26 L0 13 Z' fill='none' stroke='%23e7cf7a' stroke-width='1'/%3E%3C/svg%3E");
 }
 
+/* ---------- THEMES ----------
+   Switch look per school with one line in config.json:  "theme": "emerald"
+   Add a new school color scheme any time by adding another block here —
+   no other file needs to change. */
+
+[data-theme="navy-gold"]{ /* default, same as :root */ }
+
+[data-theme="emerald"]{
+  --navy: #0e3b2e;
+  --navy-2: #145c46;
+  --navy-deep: #08251c;
+  --gold: #c9a227;
+  --gold-soft: #e3cf7f;
+  --line: #dfe7df;
+  --zellige: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M13 0 L26 13 L13 26 L0 13 Z' fill='none' stroke='%23e3cf7f' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+[data-theme="burgundy"]{
+  --navy: #4a1420;
+  --navy-2: #6e1f2e;
+  --navy-deep: #2c0c14;
+  --gold: #d4af37;
+  --gold-soft: #eccf7a;
+  --line: #ecdfdf;
+  --zellige: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M13 0 L26 13 L13 26 L0 13 Z' fill='none' stroke='%23eccf7a' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+[data-theme="royal-blue"]{
+  --navy: #0b2e63;
+  --navy-2: #123f85;
+  --navy-deep: #061b3d;
+  --gold: #9aa5b1;
+  --gold-soft: #cfd6de;
+  --line: #dde3ea;
+  --zellige: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M13 0 L26 13 L13 26 L0 13 Z' fill='none' stroke='%23cfd6de' stroke-width='1'/%3E%3C/svg%3E");
+}
+
 *{ box-sizing:border-box; }
 
 html,body{
   margin:0;
   min-height:100%;
-  background: linear-gradient(180deg, #0f1b30 0%, #14213d 45%, #1a2b4d 100%);
+  background: linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 45%, var(--navy-2) 100%);
   font-family:'Cairo', sans-serif;
   color: var(--ink);
 }
