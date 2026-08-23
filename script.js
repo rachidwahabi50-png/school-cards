@@ -11,6 +11,15 @@
 
 const QR_BASE = "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=";
 
+// Built-in default emblem (SVG data URI) — used whenever config.logo is empty
+// or fails to load, so the card never looks broken even without a real logo.
+const DEFAULT_LOGO =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E" +
+  "%3Ccircle cx='32' cy='32' r='32' fill='%231f3864'/%3E" +
+  "%3Cpath d='M32 14 L54 24 L32 34 L10 24 Z' fill='%23c9a227'/%3E" +
+  "%3Cpath d='M20 27 v9 c0 4 6 8 12 8 s12-4 12-8 v-9' fill='none' stroke='%23c9a227' stroke-width='2.4'/%3E" +
+  "%3C/svg%3E";
+
 async function loadData() {
   const [config, students] = await Promise.all([
     fetch("config.json").then((r) => r.json()),
@@ -29,10 +38,11 @@ function qrUrlFor(id) {
 }
 
 function cardHTML(config, student) {
+  const logoSrc = config.logo && config.logo.trim() ? config.logo : DEFAULT_LOGO;
   return `
     <div class="card" data-id="${student.id}">
       <div class="card-band">
-        <img class="school-logo" src="${config.logo}" alt="" onerror="this.style.visibility='hidden'">
+        <img class="school-logo" src="${logoSrc}" alt="" onerror="this.onerror=null;this.src='${DEFAULT_LOGO}'">
         <div class="school-names">
           <div class="school-fr">${config.nomEcole}</div>
           <div class="school-ar">${config.nomEcoleAr}</div>
@@ -52,11 +62,14 @@ function cardHTML(config, student) {
           <div class="name-block">
             <div class="prenom">${student.prenom}</div>
             <div class="nom">${student.nom}</div>
+            ${(student.prenomAr || student.nomAr)
+              ? `<div class="name-ar">${student.prenomAr ?? ""} ${student.nomAr ?? ""}</div>`
+              : ""}
           </div>
           <div class="meta-grid">
             <div class="meta-item">
               <div class="label">Classe</div>
-              <div class="value">${student.classe}</div>
+              <div class="value">${student.classe}${student.classeAr ? ` <span class="value-ar">${student.classeAr}</span>` : ""}</div>
             </div>
             <div class="meta-item">
               <div class="label">Année scolaire</div>
