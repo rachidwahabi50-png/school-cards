@@ -245,3 +245,15 @@ document.addEventListener("DOMContentLoaded", () => {
     renderSingleCard();
   }
 });
+
+// Applies config.theme ("navy-gold" | "emerald" | "burgundy" | "royal-blue")
+// as soon as config.json is available, on both the card and print pages.
+async function applyTheme() {
+  try {
+    const config = await fetch("config.json").then((r) => r.json());
+    document.body.dataset.theme = config.theme || "navy-gold";
+  } catch (e) {
+    /* keep default theme if config.json isn't reachable yet */
+  }
+}
+applyTheme();
