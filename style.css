@@ -302,6 +302,17 @@ body.mode-print{ background:#fff; }
   font-family:'JetBrains Mono', monospace;
   font-size:.82rem; font-weight:700; color:var(--ink);
 }
+.admin-details .tel-value{
+  display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;
+}
+.admin-details .call-btn{
+  font-family:'Cairo', sans-serif;
+  font-size:.72rem; font-weight:700;
+  color:#fff; background:#1a7a3c;
+  padding:5px 12px; border-radius:999px;
+  text-decoration:none; white-space:nowrap;
+}
+.admin-details .call-btn:hover{ background:#146530; }
 
 .stage-footer{
   margin-top:22px;
