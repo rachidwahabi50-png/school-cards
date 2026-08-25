@@ -114,10 +114,19 @@ function adminPanelHTML() {
 }
 
 function adminDetailsHTML(student) {
+  const tel = student.telephoneParent || "";
+  const telHref = tel.replace(/[^\d+]/g, "");
   return `
     <div class="meta-item"><div class="label">Date de naissance</div><div class="value">${student.dateNaissance || "—"}</div></div>
-    <div class="meta-item"><div class="label">Téléphone parent</div><div class="value">${student.telephoneParent || "—"}</div></div>
+    <div class="meta-item">
+      <div class="label">Téléphone parent</div>
+      <div class="value tel-value">
+        <span>${tel || "—"}</span>
+        ${telHref ? `<a class="call-btn" href="tel:${telHref}">📞 Appeler</a>` : ""}
+      </div>
+    </div>
     <div class="meta-item"><div class="label">Adresse</div><div class="value">${student.adresse || "—"}</div></div>
+    <div class="meta-item"><div class="label">Enseignant(e)</div><div class="value">${student.enseignant || "—"}</div></div>
   `;
 }
 
